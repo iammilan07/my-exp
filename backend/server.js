@@ -27,7 +27,13 @@ const limiter = rateLimit({
 });
 
 // Middleware
-app.use(cors());
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://my-exp-ruby.vercel.app/'] // Replace with your actual Vercel URL
+    : 'http://localhost:3000',
+  credentials: true
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/api/', limiter);
