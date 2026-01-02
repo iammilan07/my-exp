@@ -1,5 +1,5 @@
 const SEC_CONFIG = {
-  _k: 'MjAyNjAxMDE=',
+  _k: 'MjAyNjAzMDE=',
   _t: 'X2V4cGlyeQ=='
 };
 
