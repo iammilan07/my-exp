@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, TrendingUp, TrendingDown, DollarSign, Calendar, Sparkles, Trash2 } from 'lucide-react';
+import { Plus, TrendingUp, TrendingDown, DollarSign, Calendar, Sparkles, Trash2, CalendarRange } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import api from '../utils/api';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -23,9 +23,16 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [greeting, setGreeting] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [customDateRange, setCustomDateRange] = useState({
+    startDate: format(new Date(), 'yyyy-MM-dd'),
+    endDate: format(new Date(), 'yyyy-MM-dd')
+  });
+  const [showCustomDateInputs, setShowCustomDateInputs] = useState(false);
 
   useEffect(() => {
-    fetchData();
+    if (period !== 'custom') {
+      fetchData();
+    }
     setGreetingMessage();
   }, [period]);
 
@@ -39,20 +46,105 @@ const Dashboard = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [statsRes, transactionsRes] = await Promise.all([
-        api.get('/transactions/stats'),
-        api.get(`/transactions/period/${period}`)
-      ]);
-
-      setStats(statsRes.data);
-      setTransactions(transactionsRes.data.transactions);
+      let transactionsData;
+      
+      if (period === 'custom') {
+        // Fetch transactions for custom date range
+        const response = await api.get('/transactions', {
+          params: {
+            startDate: customDateRange.startDate,
+            endDate: customDateRange.endDate
+          }
+        });
+        transactionsData = response.data.transactions || [];
+        console.log('Custom range:', customDateRange);
+        console.log('Custom range transactions:', transactionsData);
+      } else {
+        // Fetch transactions for predefined period
+        const response = await api.get(`/transactions/period/${period}`);
+        transactionsData = response.data.transactions || [];
+        console.log(`${period} transactions:`, transactionsData);
+      }
+      
+      // Calculate stats from filtered transactions
+      const calculatedStats = calculateStats(transactionsData);
+      console.log('Calculated stats:', calculatedStats);
+      
+      setStats(calculatedStats);
+      setTransactions(transactionsData);
       
       // Prepare chart data
-      prepareChartData(transactionsRes.data.transactions);
+      prepareChartData(transactionsData);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const calculateStats = (transactions) => {
+    if (!transactions || !Array.isArray(transactions)) {
+      return {
+        totalIncome: 0,
+        totalExpense: 0,
+        balance: 0,
+        topCategories: []
+      };
+    }
+
+    let totalIncome = 0;
+    let totalExpense = 0;
+    const categoryTotals = {};
+
+    transactions.forEach(transaction => {
+      const amount = Number(transaction.amount) || 0;
+      if (transaction.type === 'income') {
+        totalIncome += amount;
+      } else if (transaction.type === 'expense') {
+        totalExpense += amount;
+        // Group expenses by category for pie chart
+        if (transaction.category) {
+          if (!categoryTotals[transaction.category]) {
+            categoryTotals[transaction.category] = 0;
+          }
+          categoryTotals[transaction.category] += amount;
+        }
+      }
+    });
+
+    // Convert category totals to array format for pie chart
+    const topCategories = Object.entries(categoryTotals).map(([category, total]) => ({
+      _id: category,
+      total: total
+    })).sort((a, b) => b.total - a.total);
+
+    return {
+      totalIncome,
+      totalExpense,
+      balance: totalIncome - totalExpense,
+      topCategories
+    };
+  };
+
+  const handlePeriodChange = (newPeriod) => {
+    setPeriod(newPeriod);
+    if (newPeriod === 'custom') {
+      setShowCustomDateInputs(true);
+    } else {
+      setShowCustomDateInputs(false);
+    }
+  };
+
+  const handleCustomDateChange = (field, value) => {
+    setCustomDateRange(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const applyCustomDateRange = () => {
+    if (customDateRange.startDate && customDateRange.endDate) {
+      fetchData();
     }
   };
 
@@ -187,23 +279,69 @@ const Dashboard = () => {
         </div>
 
         {/* Period Selector */}
-        <div className="flex items-center gap-2 mb-6 animate-slide-in">
-          <Calendar className="h-5 w-5 text-gray-500" />
-          <div className="flex gap-2">
-            {['day', 'week', 'month'].map((p) => (
-              <button
-                key={p}
-                onClick={() => setPeriod(p)}
-                className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 ${
-                  period === p
-                    ? 'bg-gradient-to-r from-primary-600 to-purple-600 text-white shadow-lg'
-                    : 'bg-white text-gray-700 hover:bg-gray-100 hover:shadow-md'
-                }`}
-              >
-                {p.charAt(0).toUpperCase() + p.slice(1)}
-              </button>
-            ))}
+        <div className="mb-6 animate-slide-in">
+          <div className="flex items-center gap-2 mb-4">
+            <Calendar className="h-5 w-5 text-gray-500" />
+            <div className="flex gap-2 flex-wrap">
+              {['day', 'week', 'month', 'custom'].map((p) => (
+                <button
+                  key={p}
+                  onClick={() => handlePeriodChange(p)}
+                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 ${
+                    period === p
+                      ? 'bg-gradient-to-r from-primary-600 to-purple-600 text-white shadow-lg'
+                      : 'bg-white text-gray-700 hover:bg-gray-100 hover:shadow-md'
+                  }`}
+                >
+                  {p === 'custom' ? (
+                    <span className="flex items-center gap-1">
+                      <CalendarRange className="h-4 w-4" />
+                      Custom Range
+                    </span>
+                  ) : (
+                    p.charAt(0).toUpperCase() + p.slice(1)
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
+
+          {/* Custom Date Range Inputs */}
+          {showCustomDateInputs && (
+            <div className="bg-white rounded-lg p-4 shadow-md animate-slide-down">
+              <div className="flex flex-col sm:flex-row gap-4 items-end">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Start Date
+                  </label>
+                  <input
+                    type="date"
+                    value={customDateRange.startDate}
+                    onChange={(e) => handleCustomDateChange('startDate', e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    End Date
+                  </label>
+                  <input
+                    type="date"
+                    value={customDateRange.endDate}
+                    onChange={(e) => handleCustomDateChange('endDate', e.target.value)}
+                    min={customDateRange.startDate}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  />
+                </div>
+                <button
+                  onClick={applyCustomDateRange}
+                  className="btn btn-primary px-6 whitespace-nowrap"
+                >
+                  Apply Range
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Charts */}

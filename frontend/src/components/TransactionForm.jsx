@@ -31,9 +31,11 @@ const TransactionForm = ({ transaction, onClose, onSuccess }) => {
   const fetchCategories = async () => {
     try {
       const { data } = await api.get('/categories');
+      console.log('Fetched categories:', data);
       setCategories(data);
     } catch (error) {
       console.error('Error fetching categories:', error);
+      console.error('Error details:', error.response?.data);
     }
   };
 
@@ -81,6 +83,7 @@ const TransactionForm = ({ transaction, onClose, onSuccess }) => {
   };
 
   const filteredCategories = categories.filter(cat => cat.type === formData.type);
+  console.log('Filtered categories for', formData.type, ':', filteredCategories);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 animate-fade-in">
