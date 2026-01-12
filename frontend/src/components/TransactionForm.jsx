@@ -16,7 +16,7 @@ const TransactionForm = ({ transaction, onClose, onSuccess }) => {
 
   useEffect(() => {
     fetchCategories();
-    
+
     if (transaction) {
       setFormData({
         type: transaction.type,
@@ -87,53 +87,51 @@ const TransactionForm = ({ transaction, onClose, onSuccess }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 animate-fade-in">
-      <div className="bg-white rounded-xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto animate-slide-up">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto animate-slide-up">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-gray-900">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">
             {transaction ? 'Edit Transaction' : 'Add Transaction'}
           </h2>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg hover:bg-gray-100 transition-all duration-200 transform hover:scale-110"
+            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 transform hover:scale-110"
           >
-            <X className="h-5 w-5 text-gray-500" />
+            <X className="h-5 w-5 text-gray-500 dark:text-gray-400" />
           </button>
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
           {error && (
-            <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+            <div className="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
               {error}
             </div>
           )}
 
           {/* Type */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Type <span className="text-red-500">*</span>
             </label>
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, type: 'income', category: '' })}
-                className={`py-3 px-4 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 ${
-                  formData.type === 'income'
+                className={`py-3 px-4 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 ${formData.type === 'income'
                     ? 'bg-gradient-to-r from-green-600 to-green-500 text-white shadow-lg'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  }`}
               >
                 Income
               </button>
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, type: 'expense', category: '' })}
-                className={`py-3 px-4 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 ${
-                  formData.type === 'expense'
+                className={`py-3 px-4 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 ${formData.type === 'expense'
                     ? 'bg-gradient-to-r from-red-600 to-red-500 text-white shadow-lg'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  }`}
               >
                 Expense
               </button>
@@ -142,7 +140,7 @@ const TransactionForm = ({ transaction, onClose, onSuccess }) => {
 
           {/* Category */}
           <div>
-            <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Category <span className="text-red-500">*</span>
             </label>
             <select
@@ -164,11 +162,11 @@ const TransactionForm = ({ transaction, onClose, onSuccess }) => {
 
           {/* Amount */}
           <div>
-            <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="amount" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Amount <span className="text-red-500">*</span>
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400">
                 $
               </span>
               <input
@@ -188,7 +186,7 @@ const TransactionForm = ({ transaction, onClose, onSuccess }) => {
 
           {/* Date */}
           <div>
-            <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="date" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Date <span className="text-red-500">*</span>
             </label>
             <input
@@ -204,7 +202,7 @@ const TransactionForm = ({ transaction, onClose, onSuccess }) => {
 
           {/* Description */}
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Description (Optional)
             </label>
             <textarea
@@ -217,7 +215,7 @@ const TransactionForm = ({ transaction, onClose, onSuccess }) => {
               placeholder="Add a note about this transaction..."
               maxLength="200"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               {formData.description.length}/200 characters
             </p>
           </div>

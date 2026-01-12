@@ -40,33 +40,33 @@ const SignIn = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-64px)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary-50 to-purple-50">
+    <div className="min-h-[calc(100vh-64px)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary-50 to-purple-50 dark:from-gray-900 dark:to-gray-950 transition-colors duration-300">
       <div className="max-w-md w-full animate-slide-up">
         {/* Header */}
         <div className="text-center mb-8 animate-fade-in">
           <Link to="/" className="inline-flex items-center justify-center space-x-2 mb-6 group">
-            <TrendingUp className="h-10 w-10 text-primary-600 transition-transform duration-300 group-hover:scale-110" />
-            <span className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-purple-600 bg-clip-text text-transparent">ExpenseTracker</span>
+            <TrendingUp className="h-10 w-10 text-primary-600 dark:text-primary-400 transition-transform duration-300 group-hover:scale-110" />
+            <span className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-purple-600 dark:from-primary-400 dark:to-purple-400 bg-clip-text text-transparent">ExpenseTracker</span>
           </Link>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome back</h2>
-          <p className="text-gray-600">Sign in to your account to continue</p>
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Welcome back</h2>
+          <p className="text-gray-600 dark:text-gray-400">Sign in to your account to continue</p>
         </div>
 
         {/* Form */}
         <div className="card hover:shadow-xl transition-shadow duration-300">
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
-              <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+              <div className="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
                 {error}
               </div>
             )}
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Email Address
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 dark:text-gray-500" />
                 <input
                   id="email"
                   name="email"
@@ -81,11 +81,11 @@ const SignIn = () => {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 dark:text-gray-500" />
                 <input
                   id="password"
                   name="password"
@@ -116,8 +116,8 @@ const SignIn = () => {
           </form>
 
           <div className="mt-6 text-center text-sm">
-            <span className="text-gray-600">Don't have an account? </span>
-            <Link to="/signup" className="text-primary-600 hover:text-primary-700 font-medium">
+            <span className="text-gray-600 dark:text-gray-400">Don't have an account? </span>
+            <Link to="/signup" className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium">
               Sign up
             </Link>
           </div>

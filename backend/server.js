@@ -10,6 +10,9 @@ import { securityMiddleware } from './middleware/security.js';
 import authRoutes from './routes/authRoutes.js';
 import transactionRoutes from './routes/transactionRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
+import budgetRoutes from './routes/budgetRoutes.js';
+import recurringRoutes from './routes/recurringRoutes.js';
+import exportRoutes from './routes/exportRoutes.js';
 
 // Load env vars
 const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env';
@@ -23,11 +26,11 @@ const app = express();
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
+  max: 2000 // limit each IP to 2000 requests per windowMs
 });
 
 // Middleware
-const allowedOrigins = process.env.ALLOWED_ORIGINS 
+const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(',')
   : ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:4173'];
 
@@ -49,6 +52,9 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/categories', categoryRoutes);
+app.use('/api/budgets', budgetRoutes);
+app.use('/api/recurring', recurringRoutes);
+app.use('/api/export', exportRoutes);
 
 // Error handling
 app.use(notFound);

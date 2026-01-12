@@ -1,10 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Menu, X, TrendingUp, LogOut, LayoutDashboard, AlertCircle } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
+import { Menu, X, TrendingUp, LogOut, LayoutDashboard, AlertCircle, Sun, Moon } from 'lucide-react';
 import { useState } from 'react';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
@@ -20,33 +22,33 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white shadow-sm sticky top-0 z-50">
+    <nav className="bg-white dark:bg-gray-900 shadow-sm dark:shadow-gray-800 sticky top-0 z-50 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <TrendingUp className="h-8 w-8 text-primary-600" />
-            <span className="text-xl font-bold text-gray-900">ExpenseTracker</span>
+            <TrendingUp className="h-8 w-8 text-primary-600 dark:text-primary-400" />
+            <span className="text-xl font-bold text-gray-900 dark:text-white">ExpenseTracker</span>
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link to="/" className="text-gray-700 hover:text-primary-600 transition-all duration-200 hover:scale-105">
+            <Link to="/" className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200 hover:scale-105">
               Home
             </Link>
-            <Link to="/about" className="text-gray-700 hover:text-primary-600 transition-all duration-200 hover:scale-105">
+            <Link to="/about" className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200 hover:scale-105">
               About
             </Link>
-            
+
             {user ? (
               <>
-                <Link to="/dashboard" className="flex items-center space-x-1 text-gray-700 hover:text-primary-600 transition-all duration-200 hover:scale-105">
+                <Link to="/dashboard" className="flex items-center space-x-1 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200 hover:scale-105">
                   <LayoutDashboard className="h-4 w-4" />
                   <span>Dashboard</span>
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="flex items-center space-x-1 text-gray-700 hover:text-red-600 transition-all duration-200 hover:scale-105"
+                  className="flex items-center space-x-1 text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 transition-all duration-200 hover:scale-105"
                 >
                   <LogOut className="h-4 w-4" />
                   <span>Logout</span>
@@ -54,7 +56,7 @@ const Navbar = () => {
               </>
             ) : (
               <>
-                <Link to="/signin" className="text-gray-700 hover:text-primary-600 transition-all duration-200 hover:scale-105">
+                <Link to="/signin" className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200 hover:scale-105">
                   Sign In
                 </Link>
                 <Link to="/signup" className="btn btn-primary transform transition-all duration-200 hover:scale-105">
@@ -62,42 +64,69 @@ const Navbar = () => {
                 </Link>
               </>
             )}
+
+            {/* Dark Mode Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300 hover:scale-110"
+              aria-label="Toggle dark mode"
+            >
+              {theme === 'dark' ? (
+                <Sun className="h-5 w-5 text-yellow-500" />
+              ) : (
+                <Moon className="h-5 w-5 text-gray-600" />
+              )}
+            </button>
           </div>
 
           {/* Mobile menu button */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-100"
-          >
-            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
+          <div className="flex items-center space-x-2 md:hidden">
+            {/* Mobile Dark Mode Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
+              aria-label="Toggle dark mode"
+            >
+              {theme === 'dark' ? (
+                <Sun className="h-5 w-5 text-yellow-500" />
+              ) : (
+                <Moon className="h-5 w-5 text-gray-600" />
+              )}
+            </button>
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+            >
+              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Mobile Navigation */}
       {isOpen && (
-        <div className="md:hidden border-t border-gray-200 animate-slide-down">
+        <div className="md:hidden border-t border-gray-200 dark:border-gray-700 animate-slide-down bg-white dark:bg-gray-900">
           <div className="px-4 py-4 space-y-3">
             <Link
               to="/"
-              className="block text-gray-700 hover:text-primary-600 transition"
+              className="block text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition"
               onClick={() => setIsOpen(false)}
             >
               Home
             </Link>
             <Link
               to="/about"
-              className="block text-gray-700 hover:text-primary-600 transition"
+              className="block text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition"
               onClick={() => setIsOpen(false)}
             >
               About
             </Link>
-            
+
             {user ? (
               <>
                 <Link
                   to="/dashboard"
-                  className="block text-gray-700 hover:text-primary-600 transition"
+                  className="block text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition"
                   onClick={() => setIsOpen(false)}
                 >
                   Dashboard
@@ -107,7 +136,7 @@ const Navbar = () => {
                     handleLogout();
                     setIsOpen(false);
                   }}
-                  className="block w-full text-left text-red-600 hover:text-red-700 transition"
+                  className="block w-full text-left text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition"
                 >
                   Logout
                 </button>
@@ -116,7 +145,7 @@ const Navbar = () => {
               <>
                 <Link
                   to="/signin"
-                  className="block text-gray-700 hover:text-primary-600 transition"
+                  className="block text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition"
                   onClick={() => setIsOpen(false)}
                 >
                   Sign In
@@ -137,14 +166,14 @@ const Navbar = () => {
       {/* Logout Confirmation Modal */}
       {showLogoutConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 animate-fade-in">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 animate-slide-up">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6 animate-slide-up">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
-                <AlertCircle className="h-6 w-6 text-red-600" />
+              <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+                <AlertCircle className="h-6 w-6 text-red-600 dark:text-red-400" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-gray-900">Confirm Logout</h3>
-                <p className="text-sm text-gray-600">Are you sure you want to logout?</p>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Confirm Logout</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Are you sure you want to logout?</p>
               </div>
             </div>
             <div className="flex gap-3 mt-6">
